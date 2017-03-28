@@ -14637,7 +14637,12 @@ When maximum depth equals to 4, the model can best generalize the data. Because 
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer: </strong>
-Grid search tunes the model's parameters which optimize a learning algorithm.</p>
+Grid search tunes the model's parameters which optimize a learning algorithm.Specifically,</p>
+<ul>
+<li>Grid search technique is applied by the gridsearchCV function in sklearn. In this project we primarily need these three parameters: the paramter define the model, the second parameter define the hyperparameters list, the third paramter defines the performance score. Thus, the possible parameters' values are input by user rather than generated automatically;</li>
+<li>The type of search of this technique should be exhaustice (testing all the possible combination);</li>
+<li>The criteria this algorithm use to define the best parameters and optimize a learning algorithm is the performance score we defined.</li>
+</ul>
 
 </div>
 </div>
@@ -14658,8 +14663,22 @@ Grid search tunes the model's parameters which optimize a learning algorithm.</p
 </div>
 <div class="inner_cell">
 <div class="text_cell_render border-box-sizing rendered_html">
-<p><strong>Answer: </strong>
-By using the k-fold cross-validation training tech, we can obtained multiple training and testing error, and then get the average errors, based on which, we can conduct the grid search more accurately.</p>
+<p><strong>Answer: </strong></p>
+<ol>
+<li><p>What is the k-fold cross-validation training technique?
+Generally speaking, we use cross-validation to tune the hyperparameters. The K-fold cross-validation training technique split data into k fold of training and validation sets.</p>
+</li>
+<li><p>Training set: A set of examples used for learning, that is to fit the parameters of the classifier.</p>
+</li>
+<li>Validation set: A set of examples used to tune the hyperparameters of a classifier, for example to choose the number of hidden units in a neural network.</li>
+<li><p>Test set: A set of examples used only to assess the performance (generalization) of a fully-specified classifier.</p>
+</li>
+<li><p>What benefit does this technique provide for grid search when optimizing a model?</p>
+</li>
+</ol>
+<p>K-fold cross-validation enables all data is used for training, and all data is used for validation exactly once.
+Suppose there is no cross-validated set. Then Grid Search may choose values of parameters than work well (score highly) for a particular validation/test set but don't generalise. With a cross-validated set, there is more test data and the model is tested more times because the model is validated k times (each time on different data). So if the averaged score is high, the model (with parameters chosen from Grid Search) is more likely to be generalisable. By doing this, we avoid overfitting.</p>
+<p>What is worth taking care of is Cross-validation only yields meaningful results if the validation set and training set are drawn from the same population and only if human biases are controlled.</p>
 
 </div>
 </div>
@@ -14696,7 +14715,7 @@ For the <code>fit_model</code> function in the code cell below, you will need to
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="c1"># TODO: Import &#39;make_scorer&#39;, &#39;DecisionTreeRegressor&#39;, and &#39;GridSearchCV&#39;</span>
@@ -14715,13 +14734,13 @@ For the <code>fit_model</code> function in the code cell below, you will need to
     <span class="n">regressor</span> <span class="o">=</span> <span class="n">DecisionTreeRegressor</span><span class="p">()</span>
     
     <span class="c1"># TODO: Create a dictionary for the parameter &#39;max_depth&#39; with a range from 1 to 10</span>
-    <span class="n">params</span> <span class="o">=</span><span class="p">{</span><span class="s1">&#39;max_depth&#39;</span><span class="p">:[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">,</span><span class="mi">9</span><span class="p">,</span><span class="mi">10</span><span class="p">]}</span>
-    
+    <span class="c1">#params ={&#39;max_depth&#39;:[1,2,3,4,5,6,7,8,9,10]}</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;max_depth&#39;</span><span class="p">:</span><span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">11</span><span class="p">)}</span>
     <span class="c1"># TODO: Transform &#39;performance_metric&#39; into a scoring function using &#39;make_scorer&#39; </span>
     <span class="n">scoring_fnc</span> <span class="o">=</span> <span class="n">make_scorer</span><span class="p">(</span><span class="n">performance_metric</span><span class="p">)</span>
 
     <span class="c1"># TODO: Create the grid search object</span>
-    <span class="n">grid</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">regressor</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">scoring</span> <span class="o">=</span> <span class="n">scoring_fnc</span><span class="p">)</span>
+    <span class="n">grid</span> <span class="o">=</span> <span class="n">GridSearchCV</span><span class="p">(</span><span class="n">regressor</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">scoring</span> <span class="o">=</span> <span class="n">scoring_fnc</span><span class="p">,</span> <span class="n">cv</span><span class="o">=</span><span class="n">cv_sets</span><span class="p">)</span>
 
     <span class="c1"># Fit the grid search object to the data to compute the optimal model</span>
     <span class="n">grid</span> <span class="o">=</span> <span class="n">grid</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
@@ -14882,6 +14901,13 @@ Predicted selling price for Client 3&#39;s home: $938,053.85
 <div class="text_cell_render border-box-sizing rendered_html">
 <p><strong>Answer: </strong>
 The predicted price of the client 1 is $408,800.00,  client 2 is $231,253.45, client 3 is $938,053.85.</p>
+<p>The intuitively guessing in question1:</p>
+<ul>
+<li>The larger the value of 'RM', the larger of the 'MEDV'. As the data shows RM2&lt;RM1&lt;RM3, the predicted price is price2&lt;price1&lt;price3, and such association is identical with the guessing;</li>
+<li>The larger the value of 'LSTAT', the smaller of the 'MEDV'. As the data shows LSTAT2&gt;LSATA1&gt;LSTAT3, the predicted price is price2&lt;price1&lt;price3, the negative association is identical with the guessing;</li>
+<li>The relationship between the 'PTRATIO' and 'MEDV' may be negative. As the data shows PTRATIO2&gt;PTRATIO1&gt;PTRATIO3, the 
+predicted price is price2&lt;price1&lt;price3, the the negative association is identical with the guessing.</li>
+</ul>
 
 </div>
 </div>
@@ -14898,38 +14924,13 @@ The predicted price of the client 1 is $408,800.00,  client 2 is $231,253.45, cl
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[14]:</div>
+<div class="prompt input_prompt">In&nbsp;[&nbsp;]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython2"><pre><span></span><span class="n">vs</span><span class="o">.</span><span class="n">PredictTrials</span><span class="p">(</span><span class="n">features</span><span class="p">,</span> <span class="n">prices</span><span class="p">,</span> <span class="n">fit_model</span><span class="p">,</span> <span class="n">client_data</span><span class="p">)</span>
 </pre></div>
 
 </div>
-</div>
-</div>
-
-<div class="output_wrapper">
-<div class="output">
-
-
-<div class="output_area"><div class="prompt"></div>
-<div class="output_subarea output_stream output_stdout output_text">
-<pre>Trial 1: $391,183.33
-Trial 2: $411,417.39
-Trial 3: $415,800.00
-Trial 4: $428,316.00
-Trial 5: $413,334.78
-Trial 6: $411,931.58
-Trial 7: $399,663.16
-Trial 8: $407,232.00
-Trial 9: $402,531.82
-Trial 10: $413,700.00
-
-Range in prices: $37,132.67
-</pre>
-</div>
-</div>
-
 </div>
 </div>
 
